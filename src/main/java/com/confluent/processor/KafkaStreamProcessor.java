@@ -37,30 +37,32 @@ public class KafkaStreamProcessor implements Processor{
         }
         if (!(productType.equals("Equity") || productType.equals("FixedIncome") || productType.equals("Syn"))){
             context.forward(record.key(), (String)record.value(),To.child("deadLetterQueue"));
-        }
-        try {
-            JsonNode value = mapper.readTree((String)record.value());
-            Root valuePojo = mapper.readValue((String)record.value(), Root.class);
-            JsonNode  payloadHeaders = value.get("wmBaseEvent").get("payloadHeaders");
-            payloadHeaders.fieldNames().forEachRemaining(key->{
-                headers.add(new Header() {
-                    @Override
-                    public String key() {
-                        return key;
-                    }
+        } else {
+            try {
+                JsonNode value = mapper.readTree((String)record.value());
+                Root valuePojo = mapper.readValue((String)record.value(), Root.class);
+                JsonNode  payloadHeaders = value.get("wmBaseEvent").get("payloadHeaders");
+                payloadHeaders.fieldNames().forEachRemaining(key->{
+                    headers.add(new Header() {
+                        @Override
+                        public String key() {
+                            return key;
+                        }
 
-                    @Override
-                    public byte[] value() {
-                        return payloadHeaders.get(key).asText().getBytes(StandardCharsets.UTF_8);
-                    }
+                        @Override
+                        public byte[] value() {
+                            return payloadHeaders.get(key).asText().getBytes(StandardCharsets.UTF_8);
+                        }
+                    });
                 });
-            });
-            //String productType = value.get("wmBaseEvent").get("contextEvent").get("EventHeader").get("WMHeader").get("WMHeaderProduct").asText();
-            context.forward(record.key(), value.get("wmBaseEvent").get("contextEvent").toString(),To.child(productType));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            context.forward(record.key(), (String)record.value(),To.child("deadLetterQueue"));
+                //String productType = value.get("wmBaseEvent").get("contextEvent").get("EventHeader").get("WMHeader").get("WMHeaderProduct").asText();
+                context.forward(record.key(), value.get("wmBaseEvent").get("contextEvent").toString(),To.child(productType));
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                context.forward(record.key(), (String)record.value(),To.child("deadLetterQueue"));
+            }
         }
+
 
     }
 
