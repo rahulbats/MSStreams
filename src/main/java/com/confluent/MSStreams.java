@@ -29,7 +29,7 @@ public class MSStreams {
         props.putIfAbsent(StreamsConfig.APPLICATION_ID_CONFIG, "msconsumer");
         props.put(StreamsConfig.SECURITY_PROTOCOL_CONFIG, "SASL_SSL");
         props.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
-        props.put(SaslConfigs.SASL_JAAS_CONFIG, "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"QPCCWYLXVNYYYECC\" password=\"S2F9H5HBW2hpl5ibGWx++UJSUY0uX2ZZQ6yTUjdA3U997yyCD3KSBpvTmsxXC5I/\";");
+        props.put(SaslConfigs.SASL_JAAS_CONFIG, "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"\" password=\"\";");
         props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "pkc-43n10.us-central1.gcp.confluent.cloud:9092");
         props.put(StreamsConfig.DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_CONFIG, LogAndContinueExceptionHandler.class);
         return props;
